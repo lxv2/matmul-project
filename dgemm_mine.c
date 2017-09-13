@@ -28,11 +28,11 @@ void basic_dgemm(const int M, const int P, const int N, const double * restrict 
   int i, j, k;
   for (j = 0; j < B3_Y; ++j) {
     for (i = 0; i < B3_X; ++i) {
-      double cij = C[j+i*M];
+      double cij = C[i+j*M];
       for (k = 0; k < B3_ID; ++k) {
 	cij += A[k+i*P] * B[k+j*P];
-      C[j+i*M] = cij;
       }
+      C[i+j*M] = cij;
     }
   }
 }
@@ -84,14 +84,23 @@ void square_dgemm(const int lda, const double * restrict AA, const double * rest
   memset(C, 0, M*N*sizeof(double));
 
   /* print values of interest */
-  printf("lda is %d\n", lda);
+  /* printf("lda is %d\n", lda);
   printf("M is %d\n", M);
   printf("P is %d\n", P);
   printf("N is %d\n", N);
   printf("B1_X  is %d\n", B1_X );
   printf("B1_ID is %d\n", B1_ID);
-  printf("B1_Y  is %d\n", B1_Y );
-  
+  printf("B1_Y  is %d\n", B1_Y ); */
+
+  /* for troubleshooting */
+  /* printf("matrix AA\n");
+  for (int i = 0; i < lda; ++i) {
+    for (int j = 0; j < lda; ++j) {
+      printf("%f ", AA[i+j*lda]);
+    }
+    printf("\n");
+  }  */
+
   /* copy the values of original matrices to padded matrices */
   for (int i = 0; i < lda; ++i) {
     for (int j = 0; j < lda; ++j) {
@@ -99,6 +108,18 @@ void square_dgemm(const int lda, const double * restrict AA, const double * rest
       A[j+i*P] = AA[i+j*lda]; /* make A row-major*/
     }
   }
+ 
+  /* for troubleshooting */
+  /* printf("%f\n", A[25+25*P]);
+     printf("%f\n", AA[25+25*lda]); */
+  /*printf("matrix AA - matrix A\n");
+  for (int i = 0; i < lda; ++i) {
+    for (int j = 0; j < lda; ++j) {
+      double AmA =  AA[i+j*lda]-A[j+i*P];
+      printf("%f ", AmA);
+    }
+    printf("\n");
+    }  */
 
   /* create first level of blocks */
   for (int i = 0; i < M; i += B1_X) {
