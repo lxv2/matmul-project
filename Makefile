@@ -5,7 +5,7 @@
 # to play with, you can put them in an appropriately-named Makefile.in.
 # For example, the default setup has a Makefile.in.icc and Makefile.in.gcc.
 
-PLATFORM=icc
+PLATFORM=mac
 
 include Makefile.in.$(PLATFORM)
 DRIVERS=$(addprefix matmul-,$(BUILDS))
@@ -70,7 +70,7 @@ timing-%.csv: matmul-%
 
 .PHONY: plot
 plot:
-	python plotter.py $(BUILDS)
+	python2.7 plotter.py $(BUILDS)
 
 # ---
 
