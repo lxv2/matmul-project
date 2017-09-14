@@ -1,24 +1,26 @@
 const char* dgemm_desc = "My awesome dgemm.";
 
 /* for the L2 cache */
-#define B1_X  ((const int) 16)
-#define B1_ID ((const int) 16) /* inner dimension */
-#define B1_Y  ((const int) 16)
+#define B1_X  ((const int) 8)
+#define B1_ID ((const int) 8) /* inner dimension */
+#define B1_Y  ((const int) 8)
 
 /* for the L1 cache */
-#define B2_X  ((const int) 4)
-#define B2_ID ((const int) 4) /* inner dimension */
-#define B2_Y  ((const int) 4)
+#define B2_X  ((const int) 8)
+#define B2_ID ((const int) 8) /* inner dimension */
+#define B2_Y  ((const int) 8)
 
 /* for the registers */
-#define B3_X  ((const int) 2)
-#define B3_ID ((const int) 2) /* inner dimension */
-#define B3_Y  ((const int) 2)
+#define B3_X  ((const int) 4)
+#define B3_ID ((const int) 8) /* inner dimension */
+#define B3_Y  ((const int) 4)
 
 /* for using memset */
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#pragma simd
 
 void basic_dgemm(const int M, const int P, const int N, const double * restrict A, 
 		 const double * restrict B, double * restrict C)
@@ -130,10 +132,15 @@ void square_dgemm(const int lda, const double * restrict AA, const double * rest
     }
   }
 
+  free(A);
+  free(B);
+
   /* put data in padded C back into original CC */
   for (int i = 0; i < lda; ++i) {
     for (int j = 0; j < lda; ++j) {
       CC[i+j*lda] = C[i+j*M];
     }
   }
+
+  free(C);
 }
