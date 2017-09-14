@@ -20,17 +20,18 @@ const char* dgemm_desc = "My awesome dgemm.";
 #include <stdlib.h>
 #include <stdio.h>
 
-#pragma simd
-
 void basic_dgemm(const int M, const int P, const int N, const double * restrict A, 
 		 const double * restrict B, double * restrict C)
 {
   /* perform calculations on smallest block */
   /* A is row-major, B is column-major, C is column-major */
   int i, j, k;
+#pragma simd
   for (j = 0; j < B3_Y; ++j) {
+#pragma simd
     for (i = 0; i < B3_X; ++i) {
       double cij = C[i+j*M];
+#pragma simd
       for (k = 0; k < B3_ID; ++k) {
 	cij += A[k+i*P] * B[k+j*P];
       }
