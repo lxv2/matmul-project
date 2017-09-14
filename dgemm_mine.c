@@ -24,6 +24,7 @@ void basic_dgemm(const int M, const int P, const int N, const double * restrict 
   for (j = 0; j < B3; ++j) {
     for (i = 0; i < B3; ++i) {
       double cij = C[i+j*M];
+ #pragma simd
       for (k = 0; k < B3; ++k) {
 	cij += A[k+i*P] * B[k+j*P];
       }
@@ -137,11 +138,13 @@ void square_dgemm(const int lda, const double * restrict AA, const double * rest
       }
     }
   }
-
+    free(A);
+    free(B);
   /* put data in padded C back into original CC */
   for (int i = 0; i < lda; ++i) {
     for (int j = 0; j < lda; ++j) {
       CC[i+j*lda] = C[i+j*M];
     }
   }
+    free(C);
 }
